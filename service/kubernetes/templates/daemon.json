@@ -1,5 +1,0 @@
-{
-  "iptables": false,
-  "ip-masq": false,
-  "exec-opts": ["native.cgroupdriver=systemd"]
-}

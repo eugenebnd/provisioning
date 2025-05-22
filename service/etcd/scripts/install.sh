@@ -16,8 +16,20 @@ rm -rf /opt/etcd && mkdir -p /opt/etcd
 
 (
   set -x
-  curl --fail-with-body -L "https://storage.googleapis.com/etcd/${version}/etcd-${version}-linux-${arch}.tar.gz" \
+  # Etcd binaries are now hosted on GitHub Releases
+  # Example URL: https://github.com/etcd-io/etcd/releases/download/v3.5.13/etcd-v3.5.13-linux-amd64.tar.gz
+  ETCD_DOWNLOAD_URL="https://github.com/etcd-io/etcd/releases/download/${version}/etcd-${version}-linux-${arch}.tar.gz"
+  
+  echo "Downloading etcd ${version} from ${ETCD_DOWNLOAD_URL}"
+  curl --fail-with-body -L "${ETCD_DOWNLOAD_URL}" \
     -o "/opt/etcd-${version}-linux-${arch}.tar.gz"
+  
+  # It's good practice to verify checksums, but that's not implemented in this script.
+  # Example:
+  # curl -L "${ETCD_DOWNLOAD_URL}.sha256" -o "/opt/etcd-${version}-linux-${arch}.tar.gz.sha256"
+  # sha256sum -c "/opt/etcd-${version}-linux-${arch}.tar.gz.sha256"
+  # rm "/opt/etcd-${version}-linux-${arch}.tar.gz.sha256"
+
   tar xzvf "/opt/etcd-${version}-linux-${arch}.tar.gz" -C /opt/etcd --strip-components=1
   rm "/opt/etcd-${version}-linux-${arch}.tar.gz"
 )

@@ -22,7 +22,8 @@ locals {
 }
 
 variable "etcd_version" {
-  default = "v3.5.6"
+  description = "Version of etcd to install (e.g., v3.5.13)."
+  default     = "v3.5.13"
 }
 
 resource "null_resource" "etcd" {
@@ -73,7 +74,7 @@ locals {
     for n in range(var.node_count) :
     templatefile("${path.module}/templates/etcd.service", {
       hostname              = element(local.etcd_hostnames, n)
-      intial_cluster        = "${join(",", formatlist("%s=http://%s:2380", local.etcd_hostnames, local.etcd_vpn_ips))}"
+      initial_cluster       = "${join(",", formatlist("%s=http://%s:2380", local.etcd_hostnames, local.etcd_vpn_ips))}" # Corrected typo here
       listen_client_urls    = "http://${element(local.etcd_vpn_ips, n)}:2379"
       advertise_client_urls = "http://${element(local.etcd_vpn_ips, n)}:2379"
       listen_peer_urls      = "http://${element(local.etcd_vpn_ips, n)}:2380"

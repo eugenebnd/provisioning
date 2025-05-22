@@ -83,17 +83,21 @@ resource "null_resource" "kubernetes" {
     inline = [
       "apt-get install -qy jq",
       "modprobe br_netfilter && echo br_netfilter >> /etc/modules",
+      # Ensure containerd directories are available if needed by any scripts prior to containerd service start
+      # Though install.sh should handle containerd setup fully.
+      # "mkdir -p /etc/containerd" # This is already in install.sh
     ]
   }
 
-  provisioner "remote-exec" {
-    inline = ["[ -d /etc/docker ] || mkdir -p /etc/docker"]
-  }
-
-  provisioner "file" {
-    content     = file("${path.module}/templates/daemon.json")
-    destination = "/etc/docker/daemon.json"
-  }
+  # Removed Docker specific provisioning:
+  # provisioner "remote-exec" {
+    #   inline = ["[ -d /etc/docker ] || mkdir -p /etc/docker"]
+  # }
+  #
+  # provisioner "file" {
+  #   content     = file("${path.module}/templates/daemon.json") # daemon.json was deleted
+  #   destination = "/etc/docker/daemon.json"
+  # }
 
   provisioner "file" {
     content = templatefile("${path.module}/templates/master-configuration.yml", {
